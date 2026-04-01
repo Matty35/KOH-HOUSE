@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kohhouse.com/sitemap.xml

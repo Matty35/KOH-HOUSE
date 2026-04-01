@@ -1,0 +1,38 @@
+{
+  "heroSlides": [
+    {
+      "headline": "Discover Extraordinary Art",
+      "subheading": "Original works and limited editions for the discerning collector.",
+      "image": "https://picsum.photos/1920/1080?random=30",
+      "cta1Text": "Explore the Collection",
+      "cta1Link": "shop.html",
+      "cta2Text": "Meet Our Artists",
+      "cta2Link": "artists.html"
+    },
+    {
+      "headline": "New Arrivals",
+      "subheading": "The latest works from our portfolio of exceptional artists.",
+      "image": "https://picsum.photos/1920/1080?random=31",
+      "cta1Text": "View New Arrivals",
+      "cta1Link": "shop.html",
+      "cta2Text": "Visit the Gallery",
+      "cta2Link": "contact.html"
+    },
+    {
+      "headline": "Limited Edition Prints",
+      "subheading": "Exclusive editions. Certified. Framed. Delivered to your door.",
+      "image": "https://picsum.photos/1920/1080?random=32",
+      "cta1Text": "Shop Limited Editions",
+      "cta1Link": "shop.html",
+      "cta2Text": "Learn More",
+      "cta2Link": "artists.html"
+    }
+  ],
+  "featuredArtworkIds": ["aw-001", "aw-002", "aw-003", "aw-004", "aw-005", "aw-006"],
+  "featuredArtistIds": ["ar-001", "ar-002", "ar-003", "ar-004", "ar-005", "ar-006"],
+  "aboutHeadline": "About KOH HOUSE",
+  "aboutText": "KOH HOUSE was founded with an unwavering belief that exceptional art transforms spaces and lives. Located in the heart of London, we represent a carefully curated portfolio of artists whose work spans contemporary, abstract, and figurative traditions. Every piece in our collection is chosen for its ability to provoke, inspire, and endure.",
+  "aboutImage": "https://picsum.photos/900/700?random=40",
+  "pressQuote": "One of London's most exciting new gallery spaces.",
+  "pressSource": "The Sunday Times"
+}

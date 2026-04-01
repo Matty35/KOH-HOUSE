@@ -1,0 +1,62 @@
+[
+  {
+    "id": "ar-001",
+    "name": "Elena Marchetti",
+    "bio": "Born in Milan and trained at the Accademia di Belle Arti di Brera, Elena Marchetti has spent the past two decades developing a painterly language that sits at the intersection of abstract expressionism and colour field painting. Her work has been exhibited at galleries in London, Paris, and New York, earning critical acclaim for its luminous surfaces and rigorous compositional thinking. Marchetti relocated to East London in 2015, and the city's restless energy has profoundly shaped the urgency and scale of her more recent canvases. She is represented exclusively by KOH HOUSE in the United Kingdom.",
+    "profileImageUrl": "https://picsum.photos/600/600?random=20",
+    "nationality": "Italian",
+    "speciality": "Abstract & Contemporary Painting",
+    "shortBio": "Milan-born abstract painter celebrated for luminous, colour-driven canvases.",
+    "featured": true
+  },
+  {
+    "id": "ar-002",
+    "name": "James Whitfield",
+    "bio": "James Whitfield is a British painter whose work is rooted in a deep observation of the English landscape and the evolving character of London's neighbourhoods. A graduate of the Slade School of Fine Art, he spent ten years painting the coastlines of Cornwall and Dorset before returning to London to document the city's quieter, more intimate moments. His oils and watercolours are distinguished by a sensitivity to light that recalls the great British tradition of Constable and Sickert, while remaining firmly rooted in the present. His work is held in several private collections across Europe and North America.",
+    "profileImageUrl": "https://picsum.photos/600/600?random=21",
+    "nationality": "British",
+    "speciality": "Landscape & Cityscape",
+    "shortBio": "Slade-trained British painter capturing London's light with quiet mastery.",
+    "featured": true
+  },
+  {
+    "id": "ar-003",
+    "name": "Amara Osei",
+    "bio": "Amara Osei was born in Accra, Ghana, and moved to London at the age of twelve, a transition that continues to inform the layered sense of identity and belonging that runs through his figurative work. Trained at Goldsmiths College, he works primarily in oil and charcoal, creating portraits that honour the complexity and dignity of his subjects with rare emotional intelligence. Osei has been the subject of solo exhibitions at the Tate Modern Members' Room and the Stephen Friedman Gallery, and his work has been featured in the Financial Times and Frieze magazine. He lives and works in Peckham.",
+    "profileImageUrl": "https://picsum.photos/600/600?random=22",
+    "nationality": "Ghanaian-British",
+    "speciality": "Portrait & Figurative",
+    "shortBio": "Goldsmiths-trained figurative painter whose portraits resonate with quiet power.",
+    "featured": true
+  },
+  {
+    "id": "ar-004",
+    "name": "Sophie Laurent",
+    "bio": "Sophie Laurent trained at the École Nationale Supérieure des Beaux-Arts in Paris before moving to London, where she has become one of the most distinctive voices in contemporary botanical and floral painting. Her work moves far beyond mere decoration, using flowers as vehicles for explorations of transience, desire, and feminine interiority. Laurent's layered surfaces — built up through encaustic wax, oil, and found botanical elements — give her work an unusual physical presence that rewards close looking. She exhibits internationally and her work is held in corporate and private collections worldwide.",
+    "profileImageUrl": "https://picsum.photos/600/600?random=23",
+    "nationality": "French",
+    "speciality": "Floral & Still Life",
+    "shortBio": "Paris-trained painter transforming botanical subjects into works of rich psychological depth.",
+    "featured": true
+  },
+  {
+    "id": "ar-005",
+    "name": "Marcus Chen",
+    "bio": "Marcus Chen grew up between Hong Kong and South London, and the visual culture of both cities courses through his practice. Originally a street artist working under the tag 'Archive', he has transitioned into one of the most compelling studio artists of his generation, bringing the energy, urgency, and material intelligence of the street into a fine art context. His works on board and panel layer stencil, spray paint, collage, and drawing into dense urban compositions that function as social documents as much as aesthetic objects. Chen was shortlisted for the Beep Wales International Painting Prize in 2023.",
+    "profileImageUrl": "https://picsum.photos/600/600?random=24",
+    "nationality": "British-Chinese",
+    "speciality": "Street Art & Urban Mixed Media",
+    "shortBio": "South London artist bringing street art's urgency and intelligence into the gallery.",
+    "featured": true
+  },
+  {
+    "id": "ar-006",
+    "name": "Isabelle Novak",
+    "bio": "Isabelle Novak studied sculpture at the Prague Academy of Fine Arts before completing a residency at the Henry Moore Institute in Leeds, an experience that fundamentally shaped her relationship with material, weight, and space. She works primarily in bronze and cast glass, creating forms that explore balance, tension, and the precarious beauty of equilibrium. Novak's sculptures have been installed in public spaces across Europe, and her gallery editions are prized by collectors for their exceptional craftsmanship and conceptual rigour. She is currently based in Hackney, East London.",
+    "profileImageUrl": "https://picsum.photos/600/600?random=25",
+    "nationality": "Czech",
+    "speciality": "Sculpture & Installation",
+    "shortBio": "Prague-trained sculptor creating bronze forms of extraordinary balance and beauty.",
+    "featured": true
+  }
+]
