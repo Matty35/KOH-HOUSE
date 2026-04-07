@@ -1,1 +1,191 @@
-<!-- KOH HOUSE — Contact (to be built) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KOH HOUSE | Contact</title>
+  <meta name="description" content="Get in touch with KOH HOUSE — enquire about artworks, visit our gallery, or send us a message.">
+  <meta property="og:title" content="KOH HOUSE | Contact">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/basket.css">
+</head>
+<body id="page-contact">
+
+  <!-- PAGE TRANSITION -->
+  <div id="page-transition"></div>
+
+  <!-- CUSTOM CURSOR -->
+  <div id="cursor-dot"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- NAVIGATION -->
+  <nav id="main-nav">
+    <a href="index.html" class="nav-logo">
+      KOH <span>HOUSE</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="shop.html">Shop</a>
+      <a href="artists.html">Artists</a>
+      <a href="contact.html" class="active">Contact</a>
+    </div>
+    <div class="nav-right">
+      <a href="basket.html" class="nav-basket" aria-label="View basket">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 01-8 0"/>
+        </svg>
+        <span class="basket-count hidden" id="basket-count">0</span>
+      </a>
+      <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MOBILE NAV OVERLAY -->
+  <div class="nav-overlay" id="nav-overlay">
+    <a href="index.html">Home</a>
+    <a href="shop.html">Shop</a>
+    <a href="artists.html">Artists</a>
+    <a href="contact.html">Contact</a>
+    <a href="basket.html">Basket</a>
+  </div>
+
+  <!-- PAGE HERO -->
+  <div class="page-hero">
+    <div class="page-hero-bg" style="background-image:url('https://picsum.photos/1600/600?random=52')"></div>
+    <div class="page-hero-content">
+      <div class="breadcrumb">
+        <a href="index.html">Home</a>
+        <span class="sep">/</span>
+        <span>Contact</span>
+      </div>
+      <h1>Get In Touch</h1>
+    </div>
+  </div>
+
+  <!-- CONTACT SECTION -->
+  <section class="section">
+    <div class="container">
+      <div class="grid-2">
+
+        <!-- FORM -->
+        <div>
+          <span class="section-label">Enquiries</span>
+          <h2 class="section-title" style="margin-bottom:40px">We'd Love to Hear from You</h2>
+          <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="contact-form">
+            <input type="hidden" name="form-name" value="contact">
+            <p class="hidden">
+              <label>Don't fill this out: <input name="bot-field"></label>
+            </p>
+            <div class="form-group">
+              <label for="contact-name">Full Name *</label>
+              <input type="text" id="contact-name" name="name" required style="border:none;border-bottom:1px solid #e8e8e8;border-radius:0;padding:12px 0">
+            </div>
+            <div class="form-group">
+              <label for="contact-email">Email Address *</label>
+              <input type="email" id="contact-email" name="email" required style="border:none;border-bottom:1px solid #e8e8e8;border-radius:0;padding:12px 0">
+            </div>
+            <div class="form-group">
+              <label for="contact-phone">Phone Number</label>
+              <input type="tel" id="contact-phone" name="phone" style="border:none;border-bottom:1px solid #e8e8e8;border-radius:0;padding:12px 0">
+            </div>
+            <div class="form-group">
+              <label for="contact-artwork">Artwork of Interest</label>
+              <input type="text" id="contact-artwork" name="artwork" placeholder="Title or description" style="border:none;border-bottom:1px solid #e8e8e8;border-radius:0;padding:12px 0">
+            </div>
+            <div class="form-group">
+              <label for="contact-message">Message *</label>
+              <textarea id="contact-message" name="message" rows="5" required style="border:none;border-bottom:1px solid #e8e8e8;border-radius:0;padding:12px 0;resize:none"></textarea>
+            </div>
+            <button type="submit" class="btn-dark" style="width:auto;padding:16px 48px;margin-top:8px">
+              Send Message
+            </button>
+          </form>
+        </div>
+
+        <!-- CONTACT DETAILS -->
+        <div style="padding-left:20px">
+          <span class="section-label">Visit Us</span>
+          <h2 class="section-title" style="margin-bottom:40px">KOH HOUSE</h2>
+          <div style="margin-bottom:32px">
+            <h4 style="margin-bottom:8px">Address</h4>
+            <p data-footer="address" style="line-height:1.8"></p>
+          </div>
+          <div style="margin-bottom:32px">
+            <h4 style="margin-bottom:8px">Phone</h4>
+            <p data-footer="phone"></p>
+          </div>
+          <div style="margin-bottom:32px">
+            <h4 style="margin-bottom:8px">Email</h4>
+            <p data-footer="email"></p>
+          </div>
+          <div>
+            <h4 style="margin-bottom:8px">Opening Hours</h4>
+            <p style="line-height:2">
+              Monday – Friday: 10:00 – 18:00<br>
+              Saturday: 10:00 – 17:00<br>
+              Sunday: 11:00 – 16:00
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <span class="footer-logo">KOH HOUSE</span>
+          <p class="footer-tagline">Original Art. Curated Collections.</p>
+          <div class="footer-socials">
+            <a href="#" id="footer-instagram" class="social-icon" target="_blank" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                <circle cx="12" cy="12" r="4"/>
+                <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/>
+              </svg>
+            </a>
+            <a href="#" id="footer-facebook" class="social-icon" target="_blank" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+        <div>
+          <p class="footer-col-title">Navigate</p>
+          <div class="footer-links">
+            <a href="index.html">Home</a>
+            <a href="shop.html">The Collection</a>
+            <a href="artists.html">Our Artists</a>
+            <a href="contact.html">Contact</a>
+            <a href="basket.html">Basket</a>
+          </div>
+        </div>
+        <div class="footer-contact">
+          <p class="footer-col-title">Visit Us</p>
+          <p data-footer="address"></p>
+          <p data-footer="phone"></p>
+          <p data-footer="email"></p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© <span id="footer-year"></span> KOH HOUSE. All rights reserved.</p>
+        <p>London's Premier Fine Art Gallery</p>
+      </div>
+    </div>
+  </footer>
+
+  <div id="toast-container"></div>
+
+  <script src="js/basket.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

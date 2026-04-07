@@ -1,1 +1,79 @@
-<!-- KOH HOUSE — Checkout Cancelled (to be built) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KOH HOUSE | Payment Cancelled</title>
+  <meta name="description" content="Your payment was cancelled. Your basket has been saved.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/basket.css">
+</head>
+<body id="page-cancel">
+
+  <!-- PAGE TRANSITION -->
+  <div id="page-transition"></div>
+
+  <!-- CUSTOM CURSOR -->
+  <div id="cursor-dot"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- NAVIGATION -->
+  <nav id="main-nav">
+    <a href="index.html" class="nav-logo">
+      KOH <span>HOUSE</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="shop.html">Shop</a>
+      <a href="artists.html">Artists</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="nav-right">
+      <a href="basket.html" class="nav-basket" aria-label="View basket">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 01-8 0"/>
+        </svg>
+        <span class="basket-count hidden" id="basket-count">0</span>
+      </a>
+      <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MOBILE NAV OVERLAY -->
+  <div class="nav-overlay" id="nav-overlay">
+    <a href="index.html">Home</a>
+    <a href="shop.html">Shop</a>
+    <a href="artists.html">Artists</a>
+    <a href="contact.html">Contact</a>
+    <a href="basket.html">Basket</a>
+  </div>
+
+  <!-- CANCEL -->
+  <div class="checkout-page">
+    <div>
+      <svg class="checkout-icon" viewBox="0 0 80 80" fill="none">
+        <circle cx="40" cy="40" r="38" stroke="#999" stroke-width="2"/>
+        <line x1="28" y1="28" x2="52" y2="52" stroke="#999" stroke-width="3" stroke-linecap="round"/>
+        <line x1="52" y1="28" x2="28" y2="52" stroke="#999" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+      <h1>Payment Cancelled</h1>
+      <p>No payment was taken. Your basket has been saved — return whenever you're ready to complete your purchase.</p>
+      <div class="checkout-btns">
+        <a href="basket.html" class="btn-dark" style="width:auto;padding:16px 40px">Return to Basket</a>
+        <a href="shop.html" class="btn-outline-gold">Continue Browsing</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/basket.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      updateNavBasketCount();
+    });
+  </script>
+</body>
+</html>

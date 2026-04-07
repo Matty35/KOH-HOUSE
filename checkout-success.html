@@ -1,1 +1,124 @@
-<!-- KOH HOUSE — Checkout Success (to be built) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KOH HOUSE | Order Confirmed</title>
+  <meta name="description" content="Your order has been confirmed. Thank you for purchasing from KOH HOUSE.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/basket.css">
+</head>
+<body id="page-success">
+
+  <!-- PAGE TRANSITION -->
+  <div id="page-transition"></div>
+
+  <!-- CUSTOM CURSOR -->
+  <div id="cursor-dot"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- NAVIGATION -->
+  <nav id="main-nav">
+    <a href="index.html" class="nav-logo">
+      KOH <span>HOUSE</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="shop.html">Shop</a>
+      <a href="artists.html">Artists</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="nav-right">
+      <a href="basket.html" class="nav-basket" aria-label="View basket">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 01-8 0"/>
+        </svg>
+        <span class="basket-count hidden" id="basket-count">0</span>
+      </a>
+      <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MOBILE NAV OVERLAY -->
+  <div class="nav-overlay" id="nav-overlay">
+    <a href="index.html">Home</a>
+    <a href="shop.html">Shop</a>
+    <a href="artists.html">Artists</a>
+    <a href="contact.html">Contact</a>
+    <a href="basket.html">Basket</a>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="checkout-page">
+    <div>
+      <svg class="checkout-icon" viewBox="0 0 80 80" fill="none">
+        <circle cx="40" cy="40" r="38" stroke="#C9A84C" stroke-width="2"/>
+        <polyline points="24,40 34,52 56,28" stroke="#C9A84C" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <h1>Thank You for Your Purchase</h1>
+      <p>Your order has been confirmed. You will receive a confirmation email shortly. Our team will be in touch regarding delivery of your artwork.</p>
+      <div class="checkout-btns">
+        <a href="shop.html" class="btn-outline-gold">Continue Browsing</a>
+        <a href="artists.html" class="btn-dark" style="width:auto;padding:16px 40px">Meet Our Artists</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer id="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <span class="footer-logo">KOH HOUSE</span>
+          <p class="footer-tagline">Original Art. Curated Collections.</p>
+          <div class="footer-socials">
+            <a href="#" id="footer-instagram" class="social-icon" target="_blank" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                <circle cx="12" cy="12" r="4"/>
+                <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/>
+              </svg>
+            </a>
+            <a href="#" id="footer-facebook" class="social-icon" target="_blank" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+        <div>
+          <p class="footer-col-title">Navigate</p>
+          <div class="footer-links">
+            <a href="index.html">Home</a>
+            <a href="shop.html">The Collection</a>
+            <a href="artists.html">Our Artists</a>
+            <a href="contact.html">Contact</a>
+          </div>
+        </div>
+        <div class="footer-contact">
+          <p class="footer-col-title">Visit Us</p>
+          <p data-footer="address"></p>
+          <p data-footer="phone"></p>
+          <p data-footer="email"></p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© <span id="footer-year"></span> KOH HOUSE. All rights reserved.</p>
+        <p>London's Premier Fine Art Gallery</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/basket.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      clearBasket();
+      updateNavBasketCount();
+    });
+  </script>
+</body>
+</html>
