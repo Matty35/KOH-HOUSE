@@ -1,1 +1,187 @@
-<!-- KOH HOUSE — Single Artwork Detail (to be built) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KOH HOUSE | Artwork</title>
+  <meta name="description" content="View artwork details from KOH HOUSE, London's premier fine art gallery.">
+  <meta property="og:title" content="KOH HOUSE | Artwork">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/basket.css">
+</head>
+<body id="page-artwork">
+
+  <!-- PAGE TRANSITION -->
+  <div id="page-transition"></div>
+
+  <!-- CUSTOM CURSOR -->
+  <div id="cursor-dot"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- NAVIGATION -->
+  <nav id="main-nav">
+    <a href="index.html" class="nav-logo">
+      KOH <span>HOUSE</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="shop.html" class="active">Shop</a>
+      <a href="artists.html">Artists</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="nav-right">
+      <a href="basket.html" class="nav-basket" aria-label="View basket">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 01-8 0"/>
+        </svg>
+        <span class="basket-count hidden" id="basket-count">0</span>
+      </a>
+      <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MOBILE NAV OVERLAY -->
+  <div class="nav-overlay" id="nav-overlay">
+    <a href="index.html">Home</a>
+    <a href="shop.html">Shop</a>
+    <a href="artists.html">Artists</a>
+    <a href="contact.html">Contact</a>
+    <a href="basket.html">Basket</a>
+  </div>
+
+  <!-- ARTWORK DETAIL -->
+  <div id="artwork-detail-container">
+
+    <div class="artwork-detail-grid">
+
+      <!-- IMAGE COLUMN -->
+      <div class="artwork-detail-image" id="artwork-image-col">
+        <img id="artwork-main-image" src="" alt="" loading="lazy">
+      </div>
+
+      <!-- INFO COLUMN -->
+      <div class="artwork-detail-info">
+
+        <div class="breadcrumb">
+          <a href="index.html">Home</a>
+          <span class="sep">/</span>
+          <a href="shop.html">Shop</a>
+          <span class="sep">/</span>
+          <span id="breadcrumb-title">Artwork</span>
+        </div>
+
+        <a href="#" class="artwork-artist-link" id="artwork-artist-link">
+          <!-- artist name -->
+        </a>
+        <h1 id="artwork-title"></h1>
+
+        <div class="gold-divider"></div>
+
+        <div class="artwork-price" id="artwork-price"></div>
+        <div id="artwork-badge"></div>
+
+        <div class="artwork-specs" id="artwork-specs">
+          <!-- populated by JS: Medium, Dimensions, Edition rows -->
+        </div>
+
+        <p class="lead" id="artwork-description" style="margin:32px 0"></p>
+
+        <button id="add-to-basket-btn" class="btn-dark">
+          Add to Basket
+        </button>
+
+        <a href="#" id="enquire-link" class="about-link" style="margin-top:16px;display:inline-flex">
+          Enquire About This Piece →
+        </a>
+
+        <div class="artwork-trust-row">
+          <div class="artwork-trust-item">🔒 Secure Checkout</div>
+          <div class="artwork-trust-item">🚚 Free UK Delivery</div>
+          <div class="artwork-trust-item">📜 Certificate of Authenticity</div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- NOT FOUND STATE -->
+  <div id="artwork-not-found" class="hidden" style="text-align:center;padding:120px 40px">
+    <h2 style="font-family:'Playfair Display',serif;margin-bottom:16px">Artwork Not Found</h2>
+    <p style="margin-bottom:32px">This artwork may have been removed or sold.</p>
+    <a href="shop.html" class="btn-outline-gold">Browse the Collection</a>
+  </div>
+
+  <!-- RELATED ARTWORKS -->
+  <section class="related-artworks section-warm" id="related-section">
+    <div class="container">
+      <h2 class="section-title" style="margin-bottom:40px">You May Also Like</h2>
+      <div class="artworks-grid" id="related-grid">
+        <!-- populated by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- LIGHTBOX -->
+  <div id="lightbox">
+    <button id="lightbox-close" aria-label="Close">✕</button>
+    <img id="lightbox-img" src="" alt="">
+  </div>
+
+  <!-- FOOTER -->
+  <footer id="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <span class="footer-logo">KOH HOUSE</span>
+          <p class="footer-tagline">Original Art. Curated Collections.</p>
+          <div class="footer-socials">
+            <a href="#" id="footer-instagram" class="social-icon" target="_blank" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                <circle cx="12" cy="12" r="4"/>
+                <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/>
+              </svg>
+            </a>
+            <a href="#" id="footer-facebook" class="social-icon" target="_blank" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+        <div>
+          <p class="footer-col-title">Navigate</p>
+          <div class="footer-links">
+            <a href="index.html">Home</a>
+            <a href="shop.html">The Collection</a>
+            <a href="artists.html">Our Artists</a>
+            <a href="contact.html">Contact</a>
+            <a href="basket.html">Basket</a>
+          </div>
+        </div>
+        <div class="footer-contact">
+          <p class="footer-col-title">Visit Us</p>
+          <p data-footer="address"></p>
+          <p data-footer="phone"></p>
+          <p data-footer="email"></p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© <span id="footer-year"></span> KOH HOUSE. All rights reserved.</p>
+        <p>London's Premier Fine Art Gallery</p>
+      </div>
+    </div>
+  </footer>
+
+  <div id="toast-container"></div>
+
+  <script src="js/basket.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

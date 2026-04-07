@@ -1,1 +1,151 @@
-<!-- KOH HOUSE — Single Artist Profile (to be built) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KOH HOUSE | Artist</title>
+  <meta name="description" content="Explore the works and biography of a KOH HOUSE artist.">
+  <meta property="og:title" content="KOH HOUSE | Artist">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/basket.css">
+</head>
+<body id="page-artist">
+
+  <!-- PAGE TRANSITION -->
+  <div id="page-transition"></div>
+
+  <!-- CUSTOM CURSOR -->
+  <div id="cursor-dot"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- NAVIGATION -->
+  <nav id="main-nav">
+    <a href="index.html" class="nav-logo">
+      KOH <span>HOUSE</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="shop.html">Shop</a>
+      <a href="artists.html">Artists</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="nav-right">
+      <a href="basket.html" class="nav-basket" aria-label="View basket">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 01-8 0"/>
+        </svg>
+        <span class="basket-count hidden" id="basket-count">0</span>
+      </a>
+      <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MOBILE NAV OVERLAY -->
+  <div class="nav-overlay" id="nav-overlay">
+    <a href="index.html">Home</a>
+    <a href="shop.html">Shop</a>
+    <a href="artists.html">Artists</a>
+    <a href="contact.html">Contact</a>
+    <a href="basket.html">Basket</a>
+  </div>
+
+  <!-- ARTIST HERO -->
+  <div id="artist-hero" style="height:70vh;min-height:500px;position:relative;background:#0a0a0a;display:flex;align-items:flex-end;overflow:hidden;margin-top:80px">
+    <div id="artist-hero-bg" style="position:absolute;inset:0;background-size:cover;background-position:center top;opacity:0.45"></div>
+    <div style="position:relative;z-index:1;padding:0 40px 60px;width:100%">
+      <span class="section-label" id="artist-nationality"></span>
+      <h1 style="color:white" id="artist-name"></h1>
+      <p style="color:var(--gold);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.18em;margin-top:8px" id="artist-speciality"></p>
+    </div>
+  </div>
+
+  <!-- ARTIST BIO -->
+  <section class="section-sm">
+    <div class="container">
+      <div class="grid-2">
+        <div>
+          <span class="section-label">Biography</span>
+          <p class="lead" id="artist-bio"></p>
+        </div>
+        <div id="artist-stats" style="padding:40px;background:var(--bg-warm)">
+          <!-- populated by JS: nationality, speciality, works count -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ARTIST WORKS -->
+  <section class="section section-warm">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <span class="section-label">Portfolio</span>
+          <h2 class="section-title" id="artist-works-title">Works</h2>
+        </div>
+      </div>
+      <div class="artworks-grid reveal-stagger" id="artist-works-grid">
+        <!-- populated by JS -->
+      </div>
+      <div id="artist-no-works" class="hidden" style="text-align:center;padding:60px 0;color:var(--text-muted)">
+        No works currently available from this artist.
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <span class="footer-logo">KOH HOUSE</span>
+          <p class="footer-tagline">Original Art. Curated Collections.</p>
+          <div class="footer-socials">
+            <a href="#" id="footer-instagram" class="social-icon" target="_blank" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                <circle cx="12" cy="12" r="4"/>
+                <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/>
+              </svg>
+            </a>
+            <a href="#" id="footer-facebook" class="social-icon" target="_blank" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+        <div>
+          <p class="footer-col-title">Navigate</p>
+          <div class="footer-links">
+            <a href="index.html">Home</a>
+            <a href="shop.html">The Collection</a>
+            <a href="artists.html">Our Artists</a>
+            <a href="contact.html">Contact</a>
+            <a href="basket.html">Basket</a>
+          </div>
+        </div>
+        <div class="footer-contact">
+          <p class="footer-col-title">Visit Us</p>
+          <p data-footer="address"></p>
+          <p data-footer="phone"></p>
+          <p data-footer="email"></p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© <span id="footer-year"></span> KOH HOUSE. All rights reserved.</p>
+        <p>London's Premier Fine Art Gallery</p>
+      </div>
+    </div>
+  </footer>
+
+  <div id="toast-container"></div>
+
+  <script src="js/basket.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
