@@ -598,3 +598,520 @@ function setupArtistModal() {
   const addBtn = document.getElementById('add-artist-btn');
   if (addBtn) addBtn.addEventListener('click', openAddArtistModal);
 }
+
+// ─── HOMEPAGE PAGE ────────────────────────────────────
+async function initHomepagePage() {
+  await fetchData('homepage');
+  await fetchData('artworks');
+  await fetchData('artists');
+
+  populateHomepageForm();
+  renderSlidesList();
+  renderFeaturedCheckboxes();
+  setupHomepageEvents();
+  setupSlideModal();
+  setupImagePreview('about-image', 'about-image-preview');
+}
+
+function populateHomepageForm() {
+  const hp = store.homepage;
+  if (!hp) return;
+  document.getElementById('about-headline').value =
+    hp.aboutHeadline || '';
+  document.getElementById('about-text').value =
+    hp.aboutText || '';
+  document.getElementById('about-image').value =
+    hp.aboutImage || '';
+  document.getElementById('press-quote').value =
+    hp.pressQuote || '';
+  document.getElementById('press-source').value =
+    hp.pressSource || '';
+
+  const preview = document.getElementById('about-image-preview');
+  if (hp.aboutImage && preview) {
+    preview.src = hp.aboutImage;
+    preview.classList.remove('hidden');
+  }
+}
+
+function renderSlidesList() {
+  const list = document.getElementById('slides-list');
+  if (!list) return;
+  const slides = store.homepage?.heroSlides || [];
+
+  if (slides.length === 0) {
+    list.innerHTML = `
+      <p style="color:#718096;font-size:0.85rem;padding:16px 0">
+        No slides yet. Add your first slide.
+      </p>`;
+    return;
+  }
+
+  list.innerHTML = slides.map((slide, i) => `
+    <div class="slide-item" draggable="true"
+      data-index="${i}">
+      <span class="slide-drag-handle">⠿</span>
+      <div class="slide-item-info">
+        <div class="slide-item-headline">
+          ${slide.headline || 'Untitled slide'}
+        </div>
+        <div class="slide-item-sub">
+          ${slide.subheading || ''}
+        </div>
+      </div>
+      <div class="table-actions">
+        <button class="btn-edit"
+          onclick="openEditSlide(${i})">Edit</button>
+        <button class="btn-delete"
+          onclick="deleteSlide(${i})">Delete</button>
+      </div>
+    </div>
+  `).join('');
+
+  initDragSort();
+}
+
+function initDragSort() {
+  const items = document.querySelectorAll('.slide-item');
+  let dragSrc = null;
+
+  items.forEach(item => {
+    item.addEventListener('dragstart', function() {
+      dragSrc = this;
+      this.classList.add('dragging');
+    });
+    item.addEventListener('dragend', function() {
+      this.classList.remove('dragging');
+    });
+    item.addEventListener('dragover', e => e.preventDefault());
+    item.addEventListener('drop', function() {
+      if (dragSrc === this) return;
+      const srcIndex = parseInt(dragSrc.dataset.index);
+      const destIndex = parseInt(this.dataset.index);
+      const slides = [...store.homepage.heroSlides];
+      const [removed] = slides.splice(srcIndex, 1);
+      slides.splice(destIndex, 0, removed);
+      store.homepage.heroSlides = slides;
+      renderSlidesList();
+    });
+  });
+}
+
+function renderFeaturedCheckboxes() {
+  renderArtworkCheckboxes();
+  renderArtistCheckboxes();
+}
+
+function renderArtworkCheckboxes() {
+  const container = document.getElementById(
+    'featured-artworks-list'
+  );
+  if (!container) return;
+  const featured = store.homepage?.featuredArtworkIds || [];
+
+  container.innerHTML = (store.artworks || []).map(a => `
+    <div class="checkbox-item">
+      <input type="checkbox" id="fa-${a.id}"
+        value="${a.id}"
+        ${featured.includes(a.id) ? 'checked' : ''}
+        onchange="updateArtworkSelectionCount()">
+      <label for="fa-${a.id}">${a.title} — ${a.artist}</label>
+    </div>
+  `).join('');
+
+  updateArtworkSelectionCount();
+}
+
+function updateArtworkSelectionCount() {
+  const checked = document.querySelectorAll(
+    '#featured-artworks-list input:checked'
+  ).length;
+  const counter = document.getElementById(
+    'artwork-selection-count'
+  );
+  if (counter) counter.textContent = `${checked}/6`;
+
+  // Disable unchecked if at max
+  document.querySelectorAll(
+    '#featured-artworks-list input[type="checkbox"]'
+  ).forEach(cb => {
+    if (!cb.checked) cb.disabled = checked >= 6;
+  });
+}
+
+function renderArtistCheckboxes() {
+  const container = document.getElementById(
+    'featured-artists-list'
+  );
+  if (!container) return;
+  const featured = store.homepage?.featuredArtistIds || [];
+
+  container.innerHTML = (store.artists || []).map(a => `
+    <div class="checkbox-item">
+      <input type="checkbox" id="fart-${a.id}"
+        value="${a.id}"
+        ${featured.includes(a.id) ? 'checked' : ''}
+        onchange="updateArtistSelectionCount()">
+      <label for="fart-${a.id}">${a.name}</label>
+    </div>
+  `).join('');
+
+  updateArtistSelectionCount();
+}
+
+function updateArtistSelectionCount() {
+  const checked = document.querySelectorAll(
+    '#featured-artists-list input:checked'
+  ).length;
+  const counter = document.getElementById(
+    'artist-selection-count'
+  );
+  if (counter) counter.textContent = `${checked}/6`;
+  document.querySelectorAll(
+    '#featured-artists-list input[type="checkbox"]'
+  ).forEach(cb => {
+    if (!cb.checked) cb.disabled = checked >= 6;
+  });
+}
+
+function setupHomepageEvents() {
+  const saveBtn = document.getElementById('save-homepage-btn');
+  if (saveBtn) saveBtn.addEventListener('click', saveHomepage);
+}
+
+async function saveHomepage() {
+  const featuredArtworkIds = Array.from(
+    document.querySelectorAll(
+      '#featured-artworks-list input:checked'
+    )
+  ).map(cb => cb.value);
+
+  const featuredArtistIds = Array.from(
+    document.querySelectorAll(
+      '#featured-artists-list input:checked'
+    )
+  ).map(cb => cb.value);
+
+  const updated = {
+    ...store.homepage,
+    aboutHeadline: document.getElementById(
+      'about-headline').value.trim(),
+    aboutText: document.getElementById('about-text')
+      .value.trim(),
+    aboutImage: document.getElementById('about-image')
+      .value.trim(),
+    pressQuote: document.getElementById('press-quote')
+      .value.trim(),
+    pressSource: document.getElementById('press-source')
+      .value.trim(),
+    featuredArtworkIds,
+    featuredArtistIds
+  };
+
+  await saveData('homepage', updated);
+}
+
+function openAddSlide() {
+  document.getElementById('slide-modal-title')
+    .textContent = 'Add Hero Slide';
+  document.getElementById('slide-index').value = -1;
+  ['sl-label','sl-headline','sl-subheading','sl-image',
+   'sl-cta1-text','sl-cta1-link',
+   'sl-cta2-text','sl-cta2-link'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('sl-image-preview')
+    .classList.add('hidden');
+  setupImagePreview('sl-image', 'sl-image-preview');
+  showModal('slide-modal');
+}
+
+function openEditSlide(index) {
+  const slide = store.homepage.heroSlides[index];
+  if (!slide) return;
+  document.getElementById('slide-modal-title')
+    .textContent = 'Edit Slide';
+  document.getElementById('slide-index').value = index;
+  document.getElementById('sl-label').value =
+    slide.label || '';
+  document.getElementById('sl-headline').value =
+    slide.headline || '';
+  document.getElementById('sl-subheading').value =
+    slide.subheading || '';
+  document.getElementById('sl-image').value =
+    slide.image || '';
+  document.getElementById('sl-cta1-text').value =
+    slide.cta1Text || '';
+  document.getElementById('sl-cta1-link').value =
+    slide.cta1Link || '';
+  document.getElementById('sl-cta2-text').value =
+    slide.cta2Text || '';
+  document.getElementById('sl-cta2-link').value =
+    slide.cta2Link || '';
+
+  const preview = document.getElementById('sl-image-preview');
+  if (slide.image) {
+    preview.src = slide.image;
+    preview.classList.remove('hidden');
+  }
+  setupImagePreview('sl-image', 'sl-image-preview');
+  showModal('slide-modal');
+}
+
+function saveSlide() {
+  const index = parseInt(
+    document.getElementById('slide-index').value
+  );
+  const slideData = {
+    label: document.getElementById('sl-label').value.trim(),
+    headline: document.getElementById('sl-headline')
+      .value.trim(),
+    subheading: document.getElementById('sl-subheading')
+      .value.trim(),
+    image: document.getElementById('sl-image').value.trim(),
+    cta1Text: document.getElementById('sl-cta1-text')
+      .value.trim(),
+    cta1Link: document.getElementById('sl-cta1-link')
+      .value.trim(),
+    cta2Text: document.getElementById('sl-cta2-text')
+      .value.trim(),
+    cta2Link: document.getElementById('sl-cta2-link')
+      .value.trim()
+  };
+
+  if (!slideData.headline) {
+    showToast('Headline is required', 'error');
+    return;
+  }
+
+  if (!store.homepage.heroSlides)
+    store.homepage.heroSlides = [];
+
+  if (index === -1) {
+    store.homepage.heroSlides.push(slideData);
+  } else {
+    store.homepage.heroSlides[index] = slideData;
+  }
+
+  hideModal('slide-modal');
+  renderSlidesList();
+}
+
+function deleteSlide(index) {
+  if (!confirm('Delete this slide?')) return;
+  store.homepage.heroSlides.splice(index, 1);
+  renderSlidesList();
+}
+
+function setupSlideModal() {
+  const addBtn = document.getElementById('add-slide-btn');
+  if (addBtn) addBtn.addEventListener('click', openAddSlide);
+  const saveBtn = document.getElementById('save-slide-btn');
+  if (saveBtn) saveBtn.addEventListener('click', saveSlide);
+}
+
+// ─── SETTINGS PAGE ────────────────────────────────────
+async function initSettingsPage() {
+  await fetchData('settings');
+  populateSettingsForm();
+  setupSettingsEvents();
+}
+
+function populateSettingsForm() {
+  const s = store.settings;
+  if (!s) return;
+  const fields = {
+    'st-name': s.siteName,
+    'st-tagline': s.tagline,
+    'st-accent': s.accentColour || '#C9A84C',
+    'st-primary': s.textColour || '#1a1a1a',
+    'st-email': s.contactEmail,
+    'st-phone': s.phone,
+    'st-address': s.address,
+    'st-instagram': s.instagramUrl,
+    'st-facebook': s.facebookUrl
+  };
+  Object.entries(fields).forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    if (el && val) el.value = val;
+  });
+  updateColourPreviews();
+}
+
+function updateColourPreviews() {
+  const accent = document.getElementById('st-accent');
+  const primary = document.getElementById('st-primary');
+  if (accent) {
+    document.getElementById('st-accent-hex').textContent =
+      accent.value;
+    document.getElementById('st-accent-preview')
+      .style.background = accent.value;
+  }
+  if (primary) {
+    document.getElementById('st-primary-hex').textContent =
+      primary.value;
+    document.getElementById('st-primary-preview')
+      .style.background = primary.value;
+  }
+}
+
+async function saveSettings() {
+  const updated = {
+    ...store.settings,
+    siteName: document.getElementById('st-name').value.trim(),
+    tagline: document.getElementById('st-tagline').value.trim(),
+    accentColour: document.getElementById('st-accent').value,
+    textColour: document.getElementById('st-primary').value,
+    contactEmail: document.getElementById('st-email').value.trim(),
+    phone: document.getElementById('st-phone').value.trim(),
+    address: document.getElementById('st-address').value.trim(),
+    instagramUrl: document.getElementById('st-instagram')
+      .value.trim(),
+    facebookUrl: document.getElementById('st-facebook')
+      .value.trim()
+  };
+  await saveData('settings', updated);
+}
+
+async function changePassword() {
+  const current = document.getElementById('st-current-pw').value;
+  const newPw = document.getElementById('st-new-pw').value;
+  const confirm = document.getElementById('st-confirm-pw').value;
+
+  if (!current || !newPw || !confirm) {
+    showToast('Please fill in all password fields', 'error');
+    return;
+  }
+  if (newPw !== confirm) {
+    showToast('New passwords do not match', 'error');
+    return;
+  }
+  if (newPw.length < 8) {
+    showToast('Password must be at least 8 characters', 'error');
+    return;
+  }
+
+  // Verify current password via auth function
+  const verifyRes = await fetch(
+    `${ADMIN_CONFIG.functionsBase}/auth`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: store.settings.adminEmail,
+        password: current
+      })
+    }
+  );
+  if (!verifyRes.ok) {
+    showToast('Current password is incorrect', 'error');
+    return;
+  }
+
+  // Hash new password using SubtleCrypto
+  const encoder = new TextEncoder();
+  const data = encoder.encode(newPw);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b =>
+    b.toString(16).padStart(2, '0')
+  ).join('');
+
+  const updated = {
+    ...store.settings,
+    adminPasswordHash: hashHex
+  };
+  await saveData('settings', updated);
+  ['st-current-pw','st-new-pw','st-confirm-pw'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  showToast('Password updated successfully', 'success');
+}
+
+function setupSettingsEvents() {
+  const saveBtn = document.getElementById('save-settings-btn');
+  if (saveBtn) saveBtn.addEventListener('click', saveSettings);
+  const pwBtn = document.getElementById('change-password-btn');
+  if (pwBtn) pwBtn.addEventListener('click', changePassword);
+
+  ['st-accent','st-primary'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', updateColourPreviews);
+  });
+}
+
+// ─── DASHBOARD PAGE ───────────────────────────────────
+async function initDashboardPage() {
+  await fetchData('artworks');
+  await fetchData('artists');
+
+  const artworks = store.artworks || [];
+  const artists = store.artists || [];
+
+  document.getElementById('stat-total').textContent =
+    artworks.length;
+  document.getElementById('stat-artists').textContent =
+    artists.length;
+  document.getElementById('stat-available').textContent =
+    artworks.filter(a => a.available).length;
+  document.getElementById('stat-sold').textContent =
+    artworks.filter(a => !a.available).length;
+
+  loadRecentCommits();
+}
+
+async function loadRecentCommits() {
+  const list = document.getElementById('commits-list');
+  if (!list) return;
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/` +
+      `${ADMIN_CONFIG.githubOwner}/` +
+      `${ADMIN_CONFIG.githubRepo}/commits?per_page=5`
+    );
+    const commits = await res.json();
+    if (!Array.isArray(commits)) throw new Error();
+    list.innerHTML = commits.map(c => `
+      <div class="commit-item">
+        <span class="commit-message">
+          ${c.commit.message}
+        </span>
+        <span class="commit-time">
+          ${timeAgo(c.commit.author.date)}
+        </span>
+      </div>
+    `).join('');
+  } catch (e) {
+    list.innerHTML = `
+      <p style="color:#718096;font-size:0.82rem;padding:12px 0">
+        Unable to load recent activity.
+        Configure GitHub env vars to enable this.
+      </p>`;
+  }
+}
+
+// ─── PAGE ROUTER ──────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const path = window.location.pathname;
+
+  // Login page — no auth check needed
+  if (path.includes('admin/index') ||
+      path.endsWith('/admin/')) {
+    // Login page JS is inline in admin/index.html
+    return;
+  }
+
+  // All other admin pages need auth
+  if (!checkAuth()) return;
+
+  setupModalClose();
+  setupLogout();
+
+  if (path.includes('dashboard')) initDashboardPage();
+  else if (path.includes('artworks')) initArtworksPage();
+  else if (path.includes('artists') &&
+           path.includes('admin')) initArtistsPage();
+  else if (path.includes('homepage')) initHomepagePage();
+  else if (path.includes('settings')) initSettingsPage();
+});
