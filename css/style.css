@@ -41,7 +41,7 @@ html {
 body {
   font-family: var(--font-body);
   color: var(--text);
-  background: var(--bg);
+  background: var(--bg-dark);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
@@ -165,10 +165,11 @@ p {
   font-size: 1.3rem;
   letter-spacing: 0.25em;
   font-weight: 400;
-  color: white;
+  color: var(--text);
   transition: color var(--transition);
   text-transform: uppercase;
 }
+#page-home #main-nav:not(.nav-scrolled) .nav-logo { color: white; }
 #main-nav.nav-scrolled .nav-logo { color: var(--text); }
 .nav-logo span { color: var(--gold); }
 
@@ -182,9 +183,10 @@ p {
   text-transform: uppercase;
   letter-spacing: 0.12em;
   font-weight: 500;
-  color: rgba(255,255,255,0.9);
+  color: var(--text);
   transition: color var(--transition-fast);
 }
+#page-home #main-nav:not(.nav-scrolled) .nav-links a { color: rgba(255,255,255,0.9); }
 #main-nav.nav-scrolled .nav-links a { color: var(--text); }
 .nav-links a:hover,
 .nav-links a.active { color: var(--gold); }
@@ -197,11 +199,12 @@ p {
 .nav-basket {
   position: relative;
   cursor: pointer;
-  color: white;
+  color: var(--text);
   transition: color var(--transition-fast);
   display: flex;
   align-items: center;
 }
+#page-home #main-nav:not(.nav-scrolled) .nav-basket { color: white; }
 #main-nav.nav-scrolled .nav-basket { color: var(--text); }
 .nav-basket:hover { color: var(--gold); }
 .nav-basket svg { width: 22px; height: 22px; }
@@ -233,9 +236,10 @@ p {
   display: block;
   width: 24px;
   height: 1.5px;
-  background: white;
+  background: var(--text);
   transition: all 0.3s ease;
 }
+#page-home #main-nav:not(.nav-scrolled) .nav-hamburger span { background: white; }
 #main-nav.nav-scrolled .nav-hamburger span { background: var(--text); }
 .nav-hamburger.open span:nth-child(1) {
   transform: rotate(45deg) translate(5px, 5px);
@@ -363,6 +367,7 @@ p {
   height: 100vh;
   min-height: 700px;
   overflow: hidden;
+  background: var(--bg-dark);
 }
 .slide {
   position: absolute;
