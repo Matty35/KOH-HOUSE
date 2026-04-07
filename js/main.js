@@ -1097,40 +1097,52 @@ async function handleCheckout() {
 }
 
 // ─── PAGE ROUTER ──────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  const pageId = document.body.id;
+document.addEventListener('DOMContentLoaded', async () => {
 
-  switch (pageId) {
-    case 'page-home':
-      initHomepage();
-      break;
-    case 'page-shop':
-      initShop();
-      break;
-    case 'page-artwork':
-      initArtworkDetail();
-      break;
-    case 'page-artists':
-      initArtistsPage();
-      break;
-    case 'page-artist':
-      initArtistDetail();
-      break;
-    case 'page-basket':
-      initBasketPage();
-      break;
-    default:
-      // Non-content pages (contact, 404, etc.)
-      // Still need nav count + settings
-      (async () => {
-        const settings = await loadData('settings');
-        applySettings(settings);
-        populateFooter(settings);
-        initNav();
-        initPageTransition();
-        initScrollReveal();
-        initCursor();
-      })();
-      break;
+  // Always init nav, transition and cursor
+  initNav();
+  initPageTransition();
+  initCursor();
+
+  const path = window.location.pathname;
+  const page = document.body.id;
+
+  // Route to correct page init
+  if (page === 'page-home' ||
+      path === '/' ||
+      path.endsWith('index.html')) {
+    await initHomepage();
+  }
+  else if (page === 'page-shop' ||
+           path.includes('shop')) {
+    await initShop();
+  }
+  else if (page === 'page-artwork' ||
+           path.includes('artwork.html')) {
+    await initArtworkDetail();
+  }
+  else if (page === 'page-artists' ||
+           (path.includes('artists') &&
+            !path.includes('artist.'))) {
+    await initArtistsPage();
+  }
+  else if (page === 'page-artist' ||
+           path.includes('artist.html')) {
+    await initArtistDetail();
+  }
+  else if (page === 'page-basket' ||
+           path.includes('basket')) {
+    initBasketPage();
+    loadData('settings').then(applySettings);
+  }
+  else if (path.includes('contact')) {
+    const settings = await loadData('settings');
+    applySettings(settings);
+    initScrollReveal();
+  }
+  else {
+    // Fallback — apply settings on any other page
+    const settings = await loadData('settings');
+    applySettings(settings);
   }
 });
