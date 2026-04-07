@@ -215,3 +215,386 @@ function setupLogout() {
   const btn = document.getElementById('logout-btn');
   if (btn) btn.addEventListener('click', logout);
 }
+
+// ─── ARTWORKS PAGE ────────────────────────────────────
+async function initArtworksPage() {
+  await fetchData('artworks');
+  await fetchData('artists');
+  renderArtworksTable();
+  setupArtworkFilters();
+  setupArtworkModal();
+  setupDeleteModal('artwork');
+
+  // Check for ?action=add in URL
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('action') === 'add') openAddArtworkModal();
+}
+
+function renderArtworksTable() {
+  const tbody = document.getElementById('artworks-tbody');
+  if (!tbody) return;
+
+  const search = document.getElementById('artwork-search')
+    ?.value?.toLowerCase() || '';
+  const genre = document.getElementById('artwork-genre-filter')
+    ?.value || '';
+  const status = document.getElementById('artwork-status-filter')
+    ?.value || '';
+
+  let artworks = [...(store.artworks || [])];
+
+  if (search) {
+    artworks = artworks.filter(a =>
+      a.title.toLowerCase().includes(search) ||
+      a.artist.toLowerCase().includes(search)
+    );
+  }
+  if (genre) {
+    artworks = artworks.filter(a => a.genre === genre);
+  }
+  if (status !== '') {
+    artworks = artworks.filter(
+      a => String(a.available) === status
+    );
+  }
+
+  if (artworks.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="7" style="text-align:center;
+          padding:40px;color:#718096">
+          No artworks found
+        </td>
+      </tr>`;
+    return;
+  }
+
+  tbody.innerHTML = artworks.map(a => `
+    <tr>
+      <td>
+        <img src="${a.imageUrl}" alt="${a.title}"
+          onerror="this.src='https://picsum.photos/40/52'">
+      </td>
+      <td><strong>${a.title}</strong></td>
+      <td>${a.artist}</td>
+      <td>${a.genre}</td>
+      <td>${formatPrice(a.price)}</td>
+      <td>
+        <span class="status-badge
+          ${a.available ? 'available' : 'sold'}">
+          ${a.available ? 'Available' : 'Sold'}
+        </span>
+      </td>
+      <td>
+        <div class="table-actions">
+          <button class="btn-edit"
+            onclick="openEditArtworkModal('${a.id}')">
+            Edit
+          </button>
+          ${!a.available ? `
+            <button class="btn-restore"
+              onclick="markArtworkAvailable('${a.id}')">
+              Restore
+            </button>` : ''}
+          <button class="btn-delete"
+            onclick="openDeleteModal('${a.id}', 'artwork')">
+            Delete
+          </button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function setupArtworkFilters() {
+  ['artwork-search', 'artwork-genre-filter',
+   'artwork-status-filter'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', renderArtworksTable);
+  });
+}
+
+function openAddArtworkModal() {
+  document.getElementById('artwork-modal-title')
+    .textContent = 'Add New Artwork';
+  document.getElementById('artwork-id').value = '';
+  ['aw-title','aw-medium','aw-dimensions','aw-edition',
+   'aw-price','aw-image','aw-description'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('aw-available').checked = true;
+  document.getElementById('aw-image-preview')
+    .classList.add('hidden');
+
+  // Populate artist dropdown
+  const select = document.getElementById('aw-artist');
+  select.innerHTML = (store.artists || []).map(a =>
+    `<option value="${a.name}">${a.name}</option>`
+  ).join('');
+
+  setupImagePreview('aw-image', 'aw-image-preview');
+  showModal('artwork-modal');
+}
+
+function openEditArtworkModal(id) {
+  const artwork = store.artworks.find(a => a.id === id);
+  if (!artwork) return;
+
+  document.getElementById('artwork-modal-title')
+    .textContent = 'Edit Artwork';
+  document.getElementById('artwork-id').value = artwork.id;
+  document.getElementById('aw-title').value = artwork.title;
+  document.getElementById('aw-medium').value =
+    artwork.medium || '';
+  document.getElementById('aw-dimensions').value =
+    artwork.dimensions || '';
+  document.getElementById('aw-edition').value =
+    artwork.edition || '';
+  document.getElementById('aw-price').value = artwork.price;
+  document.getElementById('aw-image').value = artwork.imageUrl;
+  document.getElementById('aw-description').value =
+    artwork.description || '';
+  document.getElementById('aw-available').checked =
+    artwork.available;
+  document.getElementById('aw-genre').value = artwork.genre;
+
+  const preview = document.getElementById('aw-image-preview');
+  preview.src = artwork.imageUrl;
+  preview.classList.remove('hidden');
+
+  const select = document.getElementById('aw-artist');
+  select.innerHTML = (store.artists || []).map(a =>
+    `<option value="${a.name}"
+      ${a.name === artwork.artist ? 'selected' : ''}>
+      ${a.name}
+    </option>`
+  ).join('');
+
+  setupImagePreview('aw-image', 'aw-image-preview');
+  showModal('artwork-modal');
+}
+
+async function saveArtwork() {
+  const id = document.getElementById('artwork-id').value;
+  const title = document.getElementById('aw-title').value.trim();
+  const price = document.getElementById('aw-price').value;
+  const image = document.getElementById('aw-image').value.trim();
+
+  if (!title || !price || !image) {
+    showToast('Please fill in all required fields', 'error');
+    return;
+  }
+
+  const artworkData = {
+    id: id || generateId(),
+    title,
+    artist: document.getElementById('aw-artist').value,
+    genre: document.getElementById('aw-genre').value,
+    medium: document.getElementById('aw-medium').value.trim(),
+    dimensions: document.getElementById('aw-dimensions')
+      .value.trim(),
+    edition: document.getElementById('aw-edition').value.trim(),
+    price: parseFloat(price),
+    imageUrl: image,
+    description: document.getElementById('aw-description')
+      .value.trim(),
+    available: document.getElementById('aw-available').checked,
+    dateAdded: id ?
+      store.artworks.find(a => a.id === id)?.dateAdded :
+      new Date().toISOString()
+  };
+
+  let artworks = [...(store.artworks || [])];
+  if (id) {
+    const idx = artworks.findIndex(a => a.id === id);
+    if (idx > -1) artworks[idx] = artworkData;
+  } else {
+    artworks.push(artworkData);
+  }
+
+  await saveData('artworks', artworks);
+  hideModal('artwork-modal');
+  renderArtworksTable();
+}
+
+async function markArtworkAvailable(id) {
+  const artworks = [...(store.artworks || [])];
+  const idx = artworks.findIndex(a => a.id === id);
+  if (idx > -1) artworks[idx].available = true;
+  await saveData('artworks', artworks);
+  renderArtworksTable();
+}
+
+function setupArtworkModal() {
+  const saveBtn = document.getElementById('save-artwork-btn');
+  if (saveBtn) saveBtn.addEventListener('click', saveArtwork);
+  const addBtn = document.getElementById('add-artwork-btn');
+  if (addBtn) addBtn.addEventListener('click', openAddArtworkModal);
+}
+
+function openDeleteModal(id, type) {
+  document.getElementById('delete-target-id').value = id;
+  document.getElementById('delete-confirm-input').value = '';
+  document.getElementById('confirm-delete-btn').disabled = true;
+  showModal('delete-modal');
+}
+
+function setupDeleteModal(type) {
+  const input = document.getElementById('delete-confirm-input');
+  const btn = document.getElementById('confirm-delete-btn');
+  if (!input || !btn) return;
+
+  input.addEventListener('input', () => {
+    btn.disabled = input.value !== 'DELETE';
+  });
+
+  btn.addEventListener('click', async () => {
+    const id = document.getElementById('delete-target-id').value;
+    if (type === 'artwork') {
+      let artworks = store.artworks.filter(a => a.id !== id);
+      await saveData('artworks', artworks);
+      hideModal('delete-modal');
+      renderArtworksTable();
+    } else if (type === 'artist') {
+      let artists = store.artists.filter(a => a.id !== id);
+      await saveData('artists', artists);
+      hideModal('delete-modal');
+      renderArtistsGrid();
+    }
+  });
+}
+
+// ─── ARTISTS PAGE ─────────────────────────────────────
+async function initArtistsPage() {
+  await fetchData('artists');
+  renderArtistsGrid();
+  setupArtistModal();
+  setupDeleteModal('artist');
+
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('action') === 'add') openAddArtistModal();
+}
+
+function renderArtistsGrid() {
+  const grid = document.getElementById('artists-grid');
+  if (!grid) return;
+
+  const artists = store.artists || [];
+  if (artists.length === 0) {
+    grid.innerHTML = `
+      <div style="text-align:center;padding:60px;
+        color:#718096;grid-column:1/-1">
+        No artists yet. Add your first artist!
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = artists.map(a => `
+    <div class="admin-artist-card">
+      <img src="${a.profileImageUrl}" alt="${a.name}"
+        onerror="this.src='https://picsum.photos/300/300'">
+      <div class="admin-artist-info">
+        <div class="admin-artist-name">${a.name}</div>
+        <div class="admin-artist-speciality">
+          ${a.speciality || ''}
+        </div>
+        <div class="admin-artist-actions">
+          <button class="btn-edit"
+            onclick="openEditArtistModal('${a.id}')">
+            Edit
+          </button>
+          <button class="btn-delete"
+            onclick="openDeleteModal('${a.id}', 'artist')">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openAddArtistModal() {
+  document.getElementById('artist-modal-title')
+    .textContent = 'Add New Artist';
+  document.getElementById('artist-id').value = '';
+  ['ar-name','ar-nationality','ar-speciality',
+   'ar-short-bio','ar-bio','ar-image'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('ar-image-preview')
+    .classList.add('hidden');
+  setupImagePreview('ar-image', 'ar-image-preview');
+  showModal('artist-modal');
+}
+
+function openEditArtistModal(id) {
+  const artist = store.artists.find(a => a.id === id);
+  if (!artist) return;
+
+  document.getElementById('artist-modal-title')
+    .textContent = 'Edit Artist';
+  document.getElementById('artist-id').value = artist.id;
+  document.getElementById('ar-name').value = artist.name;
+  document.getElementById('ar-nationality').value =
+    artist.nationality || '';
+  document.getElementById('ar-speciality').value =
+    artist.speciality || '';
+  document.getElementById('ar-short-bio').value =
+    artist.shortBio || '';
+  document.getElementById('ar-bio').value = artist.bio || '';
+  document.getElementById('ar-image').value =
+    artist.profileImageUrl || '';
+
+  const preview = document.getElementById('ar-image-preview');
+  preview.src = artist.profileImageUrl;
+  preview.classList.remove('hidden');
+
+  setupImagePreview('ar-image', 'ar-image-preview');
+  showModal('artist-modal');
+}
+
+async function saveArtist() {
+  const id = document.getElementById('artist-id').value;
+  const name = document.getElementById('ar-name').value.trim();
+  const image = document.getElementById('ar-image').value.trim();
+
+  if (!name || !image) {
+    showToast('Name and image URL are required', 'error');
+    return;
+  }
+
+  const artistData = {
+    id: id || generateArtistId(),
+    name,
+    nationality: document.getElementById('ar-nationality')
+      .value.trim(),
+    speciality: document.getElementById('ar-speciality')
+      .value.trim(),
+    shortBio: document.getElementById('ar-short-bio')
+      .value.trim(),
+    bio: document.getElementById('ar-bio').value.trim(),
+    profileImageUrl: image,
+    featured: true
+  };
+
+  let artists = [...(store.artists || [])];
+  if (id) {
+    const idx = artists.findIndex(a => a.id === id);
+    if (idx > -1) artists[idx] = artistData;
+  } else {
+    artists.push(artistData);
+  }
+
+  await saveData('artists', artists);
+  hideModal('artist-modal');
+  renderArtistsGrid();
+}
+
+function setupArtistModal() {
+  const saveBtn = document.getElementById('save-artist-btn');
+  if (saveBtn) saveBtn.addEventListener('click', saveArtist);
+  const addBtn = document.getElementById('add-artist-btn');
+  if (addBtn) addBtn.addEventListener('click', openAddArtistModal);
+}
