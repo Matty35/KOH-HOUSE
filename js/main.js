@@ -660,3 +660,477 @@ function renderShopGrid(artworks) {
   attachCardListeners(grid);
   initScrollReveal();
 }
+
+// ─── ARTWORK DETAIL ───────────────────────────────────
+async function initArtworkDetail() {
+  const id = new URLSearchParams(window.location.search)
+    .get('id');
+
+  const detailContainer = document.getElementById(
+    'artwork-detail-container'
+  );
+  const notFound = document.getElementById(
+    'artwork-not-found'
+  );
+  const relatedSection = document.getElementById(
+    'related-section'
+  );
+
+  if (!id) {
+    detailContainer?.classList.add('hidden');
+    notFound?.classList.remove('hidden');
+    relatedSection?.classList.add('hidden');
+    return;
+  }
+
+  const [artworks, artists, settings] = await Promise.all([
+    loadData('artworks'),
+    loadData('artists'),
+    loadData('settings')
+  ]);
+
+  window._artworksData = artworks || [];
+  applySettings(settings);
+
+  const artwork = (artworks || []).find(a => a.id === id);
+
+  if (!artwork) {
+    detailContainer?.classList.add('hidden');
+    notFound?.classList.remove('hidden');
+    relatedSection?.classList.add('hidden');
+    return;
+  }
+
+  // Populate detail page
+  document.title = `${artwork.title} | KOH HOUSE`;
+
+  const img = document.getElementById('artwork-main-image');
+  if (img) { img.src = artwork.imageUrl; img.alt = artwork.title; }
+
+  document.getElementById('breadcrumb-title')
+    .textContent = artwork.title;
+
+  const artistLink = document.getElementById(
+    'artwork-artist-link'
+  );
+  if (artistLink) {
+    const artist = (artists || [])
+      .find(a => a.name === artwork.artist);
+    artistLink.textContent = artwork.artist;
+    if (artist) {
+      artistLink.href = `artist.html?id=${artist.id}`;
+    }
+  }
+
+  document.getElementById('artwork-title')
+    .textContent = artwork.title;
+
+  document.getElementById('artwork-price')
+    .textContent = formatPrice(artwork.price);
+
+  const badge = document.getElementById('artwork-badge');
+  if (badge) {
+    badge.innerHTML = `
+      <span class="card-badge
+        ${artwork.available ? 'available' : 'sold'}"
+        style="margin-bottom:24px;display:inline-flex">
+        ${artwork.available ? 'Available' : 'Sold'}
+      </span>`;
+  }
+
+  const specs = document.getElementById('artwork-specs');
+  if (specs) {
+    const rows = [
+      ['Medium', artwork.medium],
+      ['Dimensions', artwork.dimensions],
+      ['Edition', artwork.edition]
+    ].filter(([,val]) => val);
+
+    specs.innerHTML = rows.map(([label, val]) => `
+      <span class="spec-label">${label}</span>
+      <span class="spec-value">${val}</span>
+    `).join('');
+  }
+
+  const desc = document.getElementById('artwork-description');
+  if (desc) desc.textContent = artwork.description || '';
+
+  // Add to basket button
+  const basketBtn = document.getElementById('add-to-basket-btn');
+  if (basketBtn) {
+    if (!artwork.available) {
+      basketBtn.textContent = 'Sold';
+      basketBtn.disabled = true;
+    } else if (isInBasket(artwork.id)) {
+      basketBtn.textContent = 'In Your Basket ✓';
+      basketBtn.disabled = true;
+    } else {
+      basketBtn.addEventListener('click', () => {
+        addToBasket(artwork);
+        basketBtn.textContent = 'Added to Basket ✓';
+        basketBtn.disabled = true;
+      });
+    }
+  }
+
+  // Enquiry link
+  const enquireLink = document.getElementById('enquire-link');
+  if (enquireLink) {
+    enquireLink.href = `mailto:hello@kohhouse.com` +
+      `?subject=Enquiry: ${artwork.title}` +
+      `&body=I am interested in ${artwork.title} ` +
+      `by ${artwork.artist}.`;
+  }
+
+  // Lightbox
+  const mainImg = document.getElementById('artwork-main-image');
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightbox-img');
+  const lightboxClose = document.getElementById('lightbox-close');
+
+  mainImg?.addEventListener('click', () => {
+    if (lightboxImg) lightboxImg.src = artwork.imageUrl;
+    lightbox?.classList.add('open');
+  });
+  lightboxClose?.addEventListener('click', () => {
+    lightbox?.classList.remove('open');
+  });
+  lightbox?.addEventListener('click', (e) => {
+    if (e.target === lightbox) {
+      lightbox.classList.remove('open');
+    }
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      lightbox?.classList.remove('open');
+    }
+  });
+
+  // Related artworks
+  const relatedGrid = document.getElementById('related-grid');
+  if (relatedGrid && artworks) {
+    const related = artworks
+      .filter(a => a.genre === artwork.genre && a.id !== id)
+      .slice(0, 4);
+
+    if (related.length > 0) {
+      relatedGrid.innerHTML = related
+        .map(buildArtworkCard).join('');
+      attachCardListeners(relatedGrid);
+    } else {
+      relatedSection?.classList.add('hidden');
+    }
+  }
+}
+
+// ─── ARTISTS PAGE ─────────────────────────────────────
+async function initArtistsPage() {
+  const [artists, settings] = await Promise.all([
+    loadData('artists'),
+    loadData('settings')
+  ]);
+  applySettings(settings);
+
+  const grid = document.getElementById('artists-grid');
+  if (!grid || !artists) return;
+
+  grid.innerHTML = artists.map(artist => `
+    <div class="artwork-card reveal"
+      style="cursor:pointer"
+      onclick="window.location.href=
+        'artist.html?id=${artist.id}'">
+      <div class="card-image-wrapper"
+        style="aspect-ratio:3/4">
+        <img src="${artist.profileImageUrl}"
+          alt="${artist.name}" loading="lazy"
+          style="filter:grayscale(20%);
+          transition:filter 0.5s ease"
+          onmouseover="this.style.filter='grayscale(0%)'"
+          onmouseout="this.style.filter='grayscale(20%)'">
+        <div class="card-overlay">
+          <span>View Works</span>
+        </div>
+      </div>
+      <div class="card-info">
+        <span class="card-artist">
+          ${artist.nationality || ''}
+        </span>
+        <h3 class="card-title">${artist.name}</h3>
+        <p style="font-size:0.82rem;
+          color:var(--text-muted);margin-top:4px">
+          ${artist.shortBio || artist.speciality || ''}
+        </p>
+      </div>
+    </div>
+  `).join('');
+
+  initScrollReveal();
+}
+
+// ─── ARTIST DETAIL ────────────────────────────────────
+async function initArtistDetail() {
+  const id = new URLSearchParams(window.location.search)
+    .get('id');
+
+  const [artists, artworks, settings] = await Promise.all([
+    loadData('artists'),
+    loadData('artworks'),
+    loadData('settings')
+  ]);
+
+  window._artworksData = artworks || [];
+  applySettings(settings);
+
+  const artist = (artists || []).find(a => a.id === id);
+  if (!artist) {
+    document.body.innerHTML = `
+      <div style="text-align:center;padding:120px 40px">
+        <h2 style="font-family:'Playfair Display',serif">
+          Artist not found
+        </h2>
+        <a href="artists.html" style="color:var(--gold);
+          margin-top:24px;display:inline-block">
+          View All Artists
+        </a>
+      </div>`;
+    return;
+  }
+
+  document.title = `${artist.name} | KOH HOUSE`;
+
+  // Hero
+  const heroBg = document.getElementById('artist-hero-bg');
+  if (heroBg) {
+    heroBg.style.backgroundImage =
+      `url('${artist.profileImageUrl}')`;
+  }
+  document.getElementById('artist-name')
+    .textContent = artist.name;
+  document.getElementById('artist-nationality')
+    .textContent = artist.nationality || '';
+  document.getElementById('artist-speciality')
+    .textContent = artist.speciality || '';
+
+  // Bio
+  document.getElementById('artist-bio')
+    .textContent = artist.bio || '';
+
+  // Stats
+  const statsEl = document.getElementById('artist-stats');
+  const artistWorks = (artworks || [])
+    .filter(a => a.name === artist.name ||
+                 a.artist === artist.name);
+  if (statsEl) {
+    statsEl.innerHTML = `
+      <div style="margin-bottom:24px">
+        <div style="font-size:0.65rem;text-transform:uppercase;
+          letter-spacing:0.15em;color:var(--text-muted);
+          margin-bottom:6px">Speciality</div>
+        <div style="font-family:'Playfair Display',serif;
+          font-size:1.1rem">${artist.speciality || '—'}</div>
+      </div>
+      <div style="margin-bottom:24px">
+        <div style="font-size:0.65rem;text-transform:uppercase;
+          letter-spacing:0.15em;color:var(--text-muted);
+          margin-bottom:6px">Nationality</div>
+        <div style="font-family:'Playfair Display',serif;
+          font-size:1.1rem">${artist.nationality || '—'}</div>
+      </div>
+      <div>
+        <div style="font-size:0.65rem;text-transform:uppercase;
+          letter-spacing:0.15em;color:var(--text-muted);
+          margin-bottom:6px">Works Available</div>
+        <div style="font-family:'Playfair Display',serif;
+          font-size:2rem;color:var(--gold)">
+          ${artistWorks.filter(w => w.available).length}
+        </div>
+      </div>
+    `;
+  }
+
+  // Works title
+  const worksTitle = document.getElementById('artist-works-title');
+  if (worksTitle) {
+    worksTitle.textContent = `Works by ${artist.name}`;
+  }
+
+  // Works grid
+  const worksGrid = document.getElementById('artist-works-grid');
+  const noWorks = document.getElementById('artist-no-works');
+
+  if (artistWorks.length === 0) {
+    noWorks?.classList.remove('hidden');
+  } else {
+    if (worksGrid) {
+      worksGrid.innerHTML = artistWorks
+        .map(buildArtworkCard).join('');
+      attachCardListeners(worksGrid);
+    }
+  }
+
+  initScrollReveal();
+}
+
+// ─── BASKET PAGE ──────────────────────────────────────
+function initBasketPage() {
+  const basket = getBasket();
+  const emptyEl = document.getElementById('basket-empty');
+  const contentEl = document.getElementById('basket-content');
+
+  if (basket.length === 0) {
+    emptyEl?.classList.remove('hidden');
+    contentEl?.classList.add('hidden');
+    return;
+  }
+
+  emptyEl?.classList.add('hidden');
+  contentEl?.classList.remove('hidden');
+
+  renderBasketItems(basket);
+  renderOrderSummary(basket);
+
+  loadData('settings').then(applySettings);
+}
+
+function renderBasketItems(basket) {
+  const container = document.getElementById('basket-items');
+  if (!container) return;
+
+  container.innerHTML = basket.map(item => `
+    <div class="basket-item" data-id="${item.id}">
+      <img class="basket-item-image"
+        src="${item.imageUrl}" alt="${item.title}"
+        onerror="this.src=
+          'https://picsum.photos/80/100'">
+      <div class="basket-item-details">
+        <div class="basket-item-artist">${item.artist}</div>
+        <div class="basket-item-title">${item.title}</div>
+        <div class="basket-item-edition">${item.edition}</div>
+        <div class="basket-item-price">
+          ${formatPrice(item.price)}
+        </div>
+      </div>
+      <button class="basket-item-remove"
+        onclick="handleRemoveFromBasket('${item.id}')"
+        aria-label="Remove ${item.title}">
+        ✕
+      </button>
+    </div>
+  `).join('');
+}
+
+function handleRemoveFromBasket(id) {
+  removeFromBasket(id);
+  const basket = getBasket();
+  if (basket.length === 0) {
+    document.getElementById('basket-empty')
+      ?.classList.remove('hidden');
+    document.getElementById('basket-content')
+      ?.classList.add('hidden');
+  } else {
+    renderBasketItems(basket);
+    renderOrderSummary(basket);
+  }
+}
+
+function renderOrderSummary(basket) {
+  const linesEl = document.getElementById('summary-lines');
+  const totalEl = document.getElementById('basket-total');
+
+  if (linesEl) {
+    linesEl.innerHTML = basket.map(item => `
+      <div class="summary-line">
+        <span class="label">${item.title}</span>
+        <span class="value">${formatPrice(item.price)}</span>
+      </div>
+    `).join('') + `
+      <div class="summary-line shipping">
+        <span class="label">Delivery</span>
+        <span class="value">Free</span>
+      </div>
+    `;
+  }
+
+  if (totalEl) {
+    totalEl.textContent = formatPrice(getBasketTotal());
+  }
+
+  // Checkout button
+  const checkoutBtn = document.getElementById('checkout-btn');
+  checkoutBtn?.addEventListener('click', handleCheckout);
+}
+
+async function handleCheckout() {
+  const btn = document.getElementById('checkout-btn');
+  if (!btn) return;
+
+  btn.textContent = 'Processing...';
+  btn.disabled = true;
+
+  const basket = getBasket();
+
+  try {
+    const res = await fetch(
+      '/.netlify/functions/create-checkout',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: basket })
+      }
+    );
+    const data = await res.json();
+
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      throw new Error(data.error || 'No checkout URL');
+    }
+  } catch (e) {
+    console.error('Checkout error:', e);
+    showBasketToast(
+      'Payment setup failed. Please try again.',
+      'error'
+    );
+    btn.textContent = 'Proceed to Checkout';
+    btn.disabled = false;
+  }
+}
+
+// ─── PAGE ROUTER ──────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const pageId = document.body.id;
+
+  switch (pageId) {
+    case 'page-home':
+      initHomepage();
+      break;
+    case 'page-shop':
+      initShop();
+      break;
+    case 'page-artwork':
+      initArtworkDetail();
+      break;
+    case 'page-artists':
+      initArtistsPage();
+      break;
+    case 'page-artist':
+      initArtistDetail();
+      break;
+    case 'page-basket':
+      initBasketPage();
+      break;
+    default:
+      // Non-content pages (contact, 404, etc.)
+      // Still need nav count + settings
+      (async () => {
+        const settings = await loadData('settings');
+        applySettings(settings);
+        populateFooter(settings);
+        initNav();
+        initPageTransition();
+        initScrollReveal();
+        initCursor();
+      })();
+      break;
+  }
+});
