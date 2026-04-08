@@ -128,15 +128,14 @@ function initPageTransition() {
   const overlay = document.getElementById('page-transition');
   if (!overlay) return;
 
-  // Fade in on load
-  overlay.style.opacity = '1';
+  // Fade out on page load — no inline style, let CSS class control opacity
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       overlay.classList.add('hidden');
     });
   });
 
-  // Fade out on link click
+  // Fade to white on link click, then navigate
   document.querySelectorAll('a[href]').forEach(link => {
     const href = link.getAttribute('href');
     if (!href || href.startsWith('#') ||
@@ -147,7 +146,6 @@ function initPageTransition() {
     link.addEventListener('click', (e) => {
       e.preventDefault();
       overlay.classList.remove('hidden');
-      overlay.style.opacity = '1';
       setTimeout(() => {
         window.location.href = href;
       }, 350);
